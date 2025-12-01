@@ -4,12 +4,20 @@ import barkMiddleware, {
   warn as _warn,
   error as _error
 } from '@/bark';
+import type { Color } from '@/options';
 
 declare namespace bark {
   interface Options {
     prefix?: string,
     showTimestamp?: boolean,
     timestampFormat?: string,
+    colors?: {
+      debug?: Color,
+      warn?: Color,
+      info?: Color,
+      error?: Color,
+      http?: Color
+    }
   }
 
   function debug(msg: string): void

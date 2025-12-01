@@ -1,5 +1,7 @@
 import bark from '@/index';
 
+export type Color = 'red' | 'blue' | 'green' | 'cyan' | 'yellow' | 'magenta' | 'gray' | 'white' | 'black';
+
 type OptionsUpdateCallback = (options: bark.Options) => void;
 
 class OptionsManager {
