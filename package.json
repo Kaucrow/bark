@@ -16,5 +16,10 @@
   "devDependencies": {
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.5",
+    "express": "^5.1.0",
+    "picocolors": "^1.1.1"
   }
 }
