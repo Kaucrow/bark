@@ -48,9 +48,7 @@ export function error(msg: string) {
 export default (newOptions: bark.Options = {}) => {
   options.value = { ...options.value, ...newOptions };
 
-  const {
-    prefix = 'LOG',
-  } = options.value;
+  const prefix = options.value.prefix!;
 
   return (req: Request, res: Response, next: NextFunction) => {
     let startTimeString = timestamp.now();
