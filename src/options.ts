@@ -5,6 +5,7 @@ export type Color = 'red' | 'blue' | 'green' | 'cyan' | 'yellow' | 'magenta' | '
 
 export const options = new Reactive<bark.Options>({
   showTimestamp: true,
+  timestampFormat:'DD-MM-YY HH:mm:ss:SSS',
   colors: {
       debug: 'blue',
       warn: 'yellow',
@@ -12,4 +13,5 @@ export const options = new Reactive<bark.Options>({
       error: 'red',
       http: 'green'
     },
+    prefix:'LOG'
 });
