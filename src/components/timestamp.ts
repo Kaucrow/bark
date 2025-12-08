@@ -31,7 +31,7 @@ class TimestampComponent {
   };
 
   private createTimestampFormat() {
-    const { timestampFormat = 'DD-MM-YY HH:mm:ss:ms'} = options.value;
+    const timestampFormat = options.value.timestampFormat!;
 
     return (d: Date) => {
       const tokens: { [key: string]: string } = {
@@ -47,7 +47,7 @@ class TimestampComponent {
         'm': d.getMinutes().toString(),
         'ss': d.getSeconds().toString().padStart(2, '0'),
         's': d.getSeconds().toString(),
-        'ms': d.getMilliseconds().toString().padStart(3, '0'),
+        'ms': d.getMilliseconds().toString(),
         'SSS': d.getMilliseconds().toString().padStart(3, '0'),
       };
 
