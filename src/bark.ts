@@ -1,9 +1,21 @@
-import { Request, Response, NextFunction } from 'express';
+import {
+  Request,
+  Response,
+  NextFunction,
+} from 'express';
 import pc from 'picocolors';
 
 import type bark from '@/index';
-import { timestamp, color } from '@/components';
+import { timestamp, color, dashboard } from '@/components';
 import { options } from '@/options';
+
+export function serve(options: bark.DashboardOptions = {}) {
+  dashboard.init(options);
+ 
+  const router = dashboard.serve();
+
+  return router;
+}
 
 export function debug(msg: string) {
   const colorFormat = color.format(options.value.colors?.debug);
@@ -56,6 +68,12 @@ export default (newOptions: bark.Options = {}) => {
     let startTimeString = timestamp.now();
     let startTime = Date.now();
     const colorFormat = color.format(options.value.colors?.http);
+
+    dashboard.addLog({
+      level: 'info',
+      message: 'feli cumpleanio :)',
+      source: 'request'
+    });
 
     console.log(colorFormat(
       `${prefix}: ` +

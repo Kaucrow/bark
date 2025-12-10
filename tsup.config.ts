@@ -7,4 +7,9 @@ export default defineConfig({
   clean: true,
   splitting: false,
   cjsInterop: true,
+  loader: {
+    '.html': 'text',
+    '.css': 'text',
+    '.asset.js': 'text',
+  },
 });

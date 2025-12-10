@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bark Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{assetPath}}/styles.css">
+  <script src="{{assetPath}}/script.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="header">
+      <h1>Bark Dashboard</h1>
+      <div class="status-indicator" id="statusIndicator">
+        <div class="status-dot"></div>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </div>
+ 
+    <div class="stats-bar">
+      <div class="stat-card">
+        <h3>Status</h3>
+        <div class="stat-value" id="statusValue">{{STATUS}}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Logs</h3>
+        <div class="stat-value" id="totalLogs">{{totalLogs}}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Connected Clients</h3>
+        <div class="stat-value" id="connectedClients">1</div>
+      </div>
+      <div class="stat-card">
+        <h3>Version</h3>
+        <div class="stat-value">{{version}}</div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn btn-primary" id="refreshStats">
+        Refresh Stats
+      </button>
+      <button class="btn btn-secondary" id="exportLogs">
+        Export Logs
+      </button>
+      <button class="btn btn-danger" id="clearLogs">
+        Clear All Logs
+      </button>
+ 
+      <div class="filter-section">
+        <span class="filter-label">Filter:</span>
+        <div class="filter-badges" id="filterBadges">
+          <span class="filter-badge active" data-level="all">All</span>
+          <span class="filter-badge" data-level="info">Info</span>
+          <span class="filter-badge" data-level="warn">Warning</span>
+          <span class="filter-badge" data-level="error">Error</span>
+          <span class="filter-badge" data-level="debug">Debug</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="logs-container" id="logsContainer">
+      {{#if initialLogs.length}}
+        {{#each initialLogs}}
+          <div class="log-entry {{this.level}}" data-level="{{this.level}}">
+            <div class="log-header">
+              <span class="log-timestamp">{{formatTime this.timestamp}}</span>
+              <span class="log-level {{this.level}}">{{this.level}}</span>
+            </div>
+            <div class="log-message">{{this.message}}</div>
+            {{#if this.source}}
+              <div class="log-source">{{this.source}}</div>
+            {{/if}}
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="empty-state">
+          <h3>No logs yet</h3>
+          <p>Logs will appear here as they arrive</p>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</body>
+</html>
