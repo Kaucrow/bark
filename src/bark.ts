@@ -8,53 +8,23 @@ import { options } from '@/options';
 
 import fs from 'fs/promises'
 
-export async function debug(msg: string) {
-  const colorFormat = color.format(options.value.colors?.debug);
-  let ts = timestamp.now();
-  let log = `DEBUG: ${ts} ${msg}`
+async function logMessage(level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR', msg: string) {
+  const colorKey = level.toLowerCase() as keyof typeof options.value.colors;
+  const colorFormat = color.format(options.value.colors?.[colorKey]);
+  const ts = timestamp.now();
+  const log = `${level}: ${ts} ${msg}`;
 
   console.log(colorFormat(log));
   logToFile(log);
 
   const db = DBManager.getInstance();
-  (await db).addLog(ts, msg, 'DEBUG');
+  (await db).addLog(ts, msg, level);
 }
 
-export async function info(msg: string) {
-  const colorFormat = color.format(options.value.colors?.info);
-  let ts = timestamp.now();
-  let log = `INFO: ${ts} ${msg}`;
-
-  console.log(colorFormat(log));
-  logToFile(log);
-
-  const db = DBManager.getInstance();
-  (await db).addLog(ts, msg, 'INFO');
-}
-
-export async function warn(msg: string) {
-  const colorFormat = color.format(options.value.colors?.warn);
-  let ts = timestamp.now();
-  let log = `WARN: ${ts} ${msg}`;
-
-  console.log(colorFormat(log));
-  logToFile(log);
-
-  const db = DBManager.getInstance();
-  (await db).addLog(ts, msg, 'WARN');
-}
-
-export async function error(msg: string) {
-  const colorFormat = color.format(options.value.colors?.error);
-  let ts = timestamp.now();
-  let log = `ERROR: ${ts} ${msg}`;
-
-  console.log(colorFormat(log));
-  logToFile(log);
-
-  const db = DBManager.getInstance();
-  (await db).addLog(ts, msg, 'ERROR');
-}
+export const debug = (msg: string) => logMessage('DEBUG', msg);
+export const info = (msg: string) => logMessage('INFO', msg);
+export const warn = (msg: string) => logMessage('WARN', msg);
+export const error = (msg: string) => logMessage('ERROR', msg);
 
 export default (newOptions: bark.Options = {}) => {
   options.value = { ...options.value, ...newOptions };
