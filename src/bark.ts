@@ -60,7 +60,7 @@ export default (newOptions: bark.Options = {}) => {
 
       let endTimeString = timestamp.now();
 
-      let log = `${prefix} REQ: ${startTimeString} ${req.method} ${req.url} ${status.toString()} ${`- ${duration}ms`}`
+      let log = `${prefix} RES: ${startTimeString} ${req.method} ${req.url} ${status.toString()} ${`- ${duration}ms`}`
 
       console.log(colorFormat(
         `${prefix} RES: ` +
@@ -79,6 +79,3 @@ export default (newOptions: bark.Options = {}) => {
     next();
   };
 };
-
-// logs in file
-
