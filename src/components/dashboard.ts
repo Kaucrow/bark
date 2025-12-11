@@ -60,7 +60,6 @@ class DashboardComponent {
 
     this.#wss.on('connection', (ws: WebSocket) => {
       this.#clients.add(ws);
-      console.log('New WebSocket client connected');
 
       // Send initial logs to new client
       ws.send(JSON.stringify({
@@ -80,7 +79,6 @@ class DashboardComponent {
 
       ws.on('close', () => {
         this.#clients.delete(ws);
-        console.log('WebSocket client disconnected');
       });
 
       ws.on('error', (err) => {
@@ -158,8 +156,6 @@ class DashboardComponent {
       this.#logs.splice(0, this.#logs.length - maxLogs);
     }
 
-    console.log('BROADCASTING NEW LOG');
-
     this.#broadcast({
       type: 'NEW_LOG',
       data: newLog
@@ -171,7 +167,6 @@ class DashboardComponent {
   #handleClientMessage(ws: WebSocket, msg: ClientMessage) {
     switch (msg.type) {
       case 'FILTER_CHANGE': {
-        console.log('Client changed filter to:', msg.data);
         break;
       }
 

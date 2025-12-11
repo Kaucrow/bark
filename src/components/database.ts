@@ -1,4 +1,3 @@
-
 import sqlite3, { Database } from 'sqlite3';
 import path from 'path';
 
@@ -10,11 +9,9 @@ export default class DBManager{
         const dbPath = path.resolve(__dirname, '../src/database/database.db');
 
         this.dbInstance = new sqlite3.Database(dbPath, (err) => {
-        if (err) {
-            console.error('Error opening database:', err);
-        } else {
-            console.log('Connected to SQLite database');
-        }
+          if (err) {
+              console.error('Error opening database:', err);
+          }
         });
 
         this.dbInstance.serialize(() => {

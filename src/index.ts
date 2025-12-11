@@ -1,3 +1,5 @@
+import { RequestHandler } from 'express';
+
 import barkMiddleware, {
   serve as _serve,
   debug as _debug,
@@ -25,7 +27,7 @@ declare namespace bark {
     port?: number,
   }
 
-  function serve(options: DashboardOptions): void
+  function serve(options?: DashboardOptions): RequestHandler
 
   function debug(msg: string): void
 
