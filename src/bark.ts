@@ -5,8 +5,7 @@ import DBManager from './components/database';
 import type bark from '@/index';
 import { timestamp, color } from '@/components';
 import { options } from '@/options';
-
-import fs from 'fs/promises'
+import { createFolder, logToFile } from './components/logFileManager';
 
 async function logMessage(level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR', msg: string) {
   const colorKey = level.toLowerCase() as keyof typeof options.value.colors;
@@ -83,23 +82,3 @@ export default (newOptions: bark.Options = {}) => {
 
 // logs in file
 
-async function createFolder(): Promise<void> {
-  try {
-    await fs.access('./logs');
-  } catch {
-    await fs.mkdir('./logs', { recursive: true });
-     try {
-        await fs.writeFile('./logs/log.txt', '');
-    } catch (error) {
-        console.error(`Error creating log file`);
-    }
-  }
-}
-
-async function logToFile(message:string): Promise<void> {
-  try {
-    await fs.appendFile('./logs/log.txt', `${message}\n`);
-  } catch (error) {
-    console.error('Error saving log in file:', error);
-  }
-}
