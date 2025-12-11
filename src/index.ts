@@ -1,4 +1,5 @@
 import barkMiddleware, {
+  serve as _serve,
   debug as _debug,
   info as _info,
   warn as _warn,
@@ -20,6 +21,12 @@ declare namespace bark {
     }
   }
 
+  interface DashboardOptions {
+    port?: number,
+  }
+
+  function serve(options: DashboardOptions): void
+
   function debug(msg: string): void
 
   function info(msg: string): void
@@ -29,6 +36,7 @@ declare namespace bark {
   function error(msg: string): void
 }
 
+bark.serve = _serve;
 bark.debug = _debug;
 bark.info = _info;
 bark.warn = _warn;
