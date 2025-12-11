@@ -4,10 +4,25 @@ import {
   NextFunction,
 } from 'express';
 import pc from 'picocolors';
+import DBManager from './components/database';
 
 import type bark from '@/index';
 import { timestamp, color, dashboard } from '@/components';
 import { options } from '@/options';
+import { createFolder, logToFile } from './components/logFileManager';
+
+async function logMessage(level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR', msg: string) {
+  const colorKey = level.toLowerCase() as keyof typeof options.value.colors;
+  const colorFormat = color.format(options.value.colors?.[colorKey]);
+  const ts = timestamp.now();
+  const log = `${level}: ${ts} ${msg}`;
+
+  console.log(colorFormat(log));
+  logToFile(log);
+
+  const db = DBManager.getInstance();
+  (await db).addLog(ts, msg, level);
+}
 
 export function serve(options: bark.DashboardOptions = {}) {
   dashboard.init(options);
@@ -17,57 +32,23 @@ export function serve(options: bark.DashboardOptions = {}) {
   return router;
 }
 
-export function debug(msg: string) {
-  const colorFormat = color.format(options.value.colors?.debug);
-
-  console.log(colorFormat(
-    `DEBUG: ` +
-    `${timestamp.now()}` +
-    msg
-  ));
-}
-
-export function info(msg: string) {
-  const colorFormat = color.format(options.value.colors?.info);
-
-  console.log(colorFormat(
-    `INFO: ` +
-    `${timestamp.now()}` +
-    msg
-  ));
-}
-
-export function warn(msg: string) {
-  const colorFormat = color.format(options.value.colors?.warn);
-
-  console.log(colorFormat(
-    `WARN: ` +
-    `${timestamp.now()}` +
-    msg
-  ));
-}
-
-export function error(msg: string) {
-  const colorFormat = color.format(options.value.colors?.error);
-
-  console.log(colorFormat(
-    `ERROR: ` +
-    `${timestamp.now()}` +
-    msg
-  ));
-}
+export const debug = (msg: string) => logMessage('DEBUG', msg);
+export const info = (msg: string) => logMessage('INFO', msg);
+export const warn = (msg: string) => logMessage('WARN', msg);
+export const error = (msg: string) => logMessage('ERROR', msg);
 
 export default (newOptions: bark.Options = {}) => {
   options.value = { ...options.value, ...newOptions };
+  const db = DBManager.getInstance();
+  createFolder();
 
-  const {
-    prefix = 'LOG',
-  } = options.value;
+  const prefix = options.value.prefix!;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     let startTimeString = timestamp.now();
     let startTime = Date.now();
     const colorFormat = color.format(options.value.colors?.http);
+    let log = `${prefix} REQ: ${startTimeString} ${req.method} ${req.url}`
 
     dashboard.addLog({
       level: 'info',
@@ -82,7 +63,7 @@ export default (newOptions: bark.Options = {}) => {
       `${req.url}`
     ));
 
-    res.on('finish', () => {
+    res.on('finish', async () => {
       const duration = Date.now() - startTime;
       const status = res.statusCode;
 
@@ -98,14 +79,20 @@ export default (newOptions: bark.Options = {}) => {
 
       let endTimeString = timestamp.now();
 
+      let log = `${prefix} RES: ${startTimeString} ${req.method} ${req.url} ${status.toString()} ${`- ${duration}ms`}`
+
       console.log(colorFormat(
-        `${prefix}: ` +
+        `${prefix} RES: ` +
         `${endTimeString}` +
         `${req.method} ` +
         `${req.url} ` +
         `${statusColor(status.toString())} ` +
         `${pc.gray(`- ${duration}ms`)}`
       ));
+
+      logToFile(log);
+
+      (await db).addLog(endTimeString, `RES: ${req.method} ${status.toString()} ${req.url} - ${duration}ms`, prefix);
     });
 
     next();
